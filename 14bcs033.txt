@@ -1,0 +1,462 @@
+<-- Bisection -->
+#include<stdio.h>
+#include<math.h>
+float fun (float x)
+{
+    return (x*x*x - 4*x - 9);
+}
+void bisection (float *x, float a, float b, int *itr)
+/* this function performs and prints the result of one iteration */
+{
+    *x=(a+b)/2;
+    ++(*itr);
+    printf("Iteration no. %3d X = %7.5f\n", *itr, *x);
+}
+void main ()
+{
+    int itr = 0, maxmitr;
+    float x, a, b, allerr, x1;
+    printf("\nEnter the values of a, b, allowed error and maximum iterations:\n");
+    scanf("%f %f %f %d", &a, &b, &allerr, &maxmitr);
+    bisection (&x, a, b, &itr);
+    do
+    {
+        if (fun(a)*fun(x) < 0)
+            b=x;
+        else
+            a=x;
+        bisection (&x1, a, b, &itr);
+        if (fabs(x1-x) < allerr)
+        {
+            printf("After %d iterations, root = %6.4f\n", itr, x1);
+            return 0;
+        }
+        x=x1;
+    }
+    while (itr < maxmitr);
+    printf("The solution does not converge or iterations are not sufficient");
+    return 1;
+}
+
+<-- Regula Falsi -->
+#include<stdio.h>
+#include<math.h>
+float f(float x)
+{
+    return cos(x) - x*exp(x);
+}
+void regula (float *x, float x0, float x1, float fx0, float fx1, int *itr)
+{
+    *x = x0 - ((x1 - x0) / (fx1 - fx0))*fx0;
+    ++(*itr);
+    printf("Iteration no. %3d X = %7.5f \n", *itr, *x);
+}
+void main ()
+{
+    int itr = 0, maxmitr;
+    float x0,x1,x2,x3,allerr;
+    printf("\nEnter the values of x0, x1, allowed error and maximum iterations:\n");
+    scanf("%f %f %f %d", &x0, &x1, &allerr, &maxmitr);
+    regula (&x2, x0, x1, f(x0), f(x1), &itr);
+    do
+    {
+        if (f(x0)*f(x2) < 0)
+            x1=x2;
+        else
+            x0=x2;
+        regula (&x3, x0, x1, f(x0), f(x1), &itr);
+        if (fabs(x3-x2) < allerr)
+        {
+            printf("After %d iterations, root = %6.4f\n", itr, x3);
+            return 0;
+        }
+        x2=x3;
+    }
+    while (itr<maxmitr);
+    printf("Solution does not converge or iterations not sufficient:\n");
+    return 1;
+}
+
+<-- Secant -->
+#include<stdio.h>
+float f(float x)
+{
+    return(x*x*x-4); // f(x)= x^3-4
+}
+float main()
+{
+    float a,b,c,d,e;
+    int count=1,n;
+    printf("\n\nEnter the values of a and b:\n"); //(a,b) must contain the solution.
+    scanf("%f%f",&a,&b);
+    printf("Enter the values of allowed error and maximun number of iterations:\n");
+    scanf("%f %d",&e,&n);
+    do
+    {
+        if(f(a)==f(b))
+        {
+            printf("\nSolution cannot be found as the values of a and b are same.\n");
+        return;
+        }
+        c=(a*f(b)-b*f(a))/(f(b)-f(a));
+        a=b;
+        b=c;
+        printf("Iteration No-%d    x=%f\n",count,c);
+        count++;
+        if(count==n)
+        {
+        break;
+        }
+    } while(fabs(f(c))>e);
+    printf("\n The required solution is %f\n",c);
+
+}
+
+<-- Successive Approximation -->
+#include<conio.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+
+int user_power,i=0,cnt=0,flag=0;
+int coef[10]={0};
+float x1=0,t=0;
+float x2=0;
+
+void main()
+{
+
+    clrscr();
+    printf("\nINTIAL X1");
+    scanf("%f",&x2);
+
+    do
+    {
+            cnt++;
+            x1=x2;
+            x2=(2-(log10(x1)));
+            printf("\n %d         %.3f  %.3f ",cnt,x1,x2);
+
+    }while((fabs(x2 - x1))>=0.0001);
+    printf("\n\t THE ROOT OF EQUATION IS %f",x1);
+    getch();
+}
+
+<-- Newton Raphson -->
+#include<stdio.h>
+#include<math.h>
+float f(float x)
+{
+    return x*log10(x) - 1.2;
+}
+float df (float x)
+{
+    return log10(x) + 0.43429;
+}
+void main()
+{
+    int itr, maxmitr;
+    float h, x0, x1, allerr;
+    printf("\nEnter x0, allowed error and maximum iterations\n");
+    scanf("%f %f %d", &x0, &allerr, &maxmitr);
+    for (itr=1; itr<=maxmitr; itr++)
+    {
+        h=f(x0)/df(x0);
+        x1=x0-h;
+        printf(" At Iteration no. %3d, x = %9.6f\n", itr, x1);
+        if (fabs(h) < allerr)
+        {
+            printf("After %3d iterations, root = %8.6f\n", itr, x1);
+            return 0;
+        }
+        x0=x1;
+    }
+    printf(" The required solution does not converge or iterations are insufficient\n");
+    return 1;
+}
+
+<-- Fitting Line -->
+#include<stdio.h>
+
+int main() {
+    int i,j,n;
+    float x[10],y[10],s1=0,s2=0,s3=0,s4=0,a,d,b;
+    printf("\nEnter the Value of n\n");
+    scanf("%d",&n);
+    printf("\nEnter the values of x and y\n");
+    for(i=0;i<n;i++) {
+        scanf("%f%f",&x[i],&y[i]);
+    }
+    for(i=0;i<n;i++) {
+        s1=s1+x[i];
+        s2=s2+x[i]*x[i];
+        s3=s3+y[i];
+        s4=s4+x[i]*y[i];
+    }
+    d=n*s2-s1*s1;
+    a=(s2*s3-s1*s4)/d;
+    b=(n*s4-s1*s3)/d;
+    printf("\nThe values of a and b are : %f\t%f\n",a,b);
+    printf("\nThe Required Linear Relation is : \n");
+    if(b>0){
+        printf("\ny=%f+%fx\n",a,b);
+    }
+    else {
+        printf("y=%f%fx",a,b);
+    }
+}
+
+<-- Fitting Parabola -->
+#include<stdio.h>
+#include<math.h>
+
+int main()
+{
+    int i,j,k,n;
+    float x[10],y[10],p,q,h,a[10][10],c[10];
+    printf("\nEnter the Value of n : ");
+    scanf("%d",&n);
+    printf("\nEnter the initial value of x : ");
+    scanf("%f",&x[0]);
+    printf("\nEnter the step size h for x : ");
+    scanf("%f",&h);
+    for(i=1;i<n;i++)
+    {
+        x[i]=x[i-1]+h;
+    }
+    printf("\nEnter the values of y : \n");
+    for(i=0;i<n;i++)
+    {
+        scanf("%f",&y[i]);
+    }
+    p=x[0]-(h/2);
+    q=x[n-1]+(h/2);
+    for(i=0;i<3;i++)
+    {
+        for(j=0;j<3;j++)
+        {
+            a[i][j]=(pow(q,(i+j+1))-pow(p,(i+j+1)))/(i+j+1);
+        }
+    }
+    for(i=0;i<3;i++)
+    {
+        a[i][3]=0;
+        for(j=0;j<n;j++)
+        {
+            if(i==0)
+            {
+                a[i][3]=a[i][3]+h*y[j];
+            }
+            else
+            {
+                a[i][3]=a[i][3]+h*pow(x[j],i)*y[j];
+            }
+        }
+    }
+    for(k=0;k<3;k++)
+    {
+        for(i=0;i<3;i++)
+        {
+            if(i!=k)
+            {
+                for(j=k+1;j<4;j++)
+                {
+                    a[i][j]=a[i][j]-((a[i][k]*a[k][j])/a[k][k]);
+                }
+            }
+        }
+    }
+    for(i=0;i<3;i++)
+    {
+        c[i]=a[i][3]/a[i][i];
+        printf("The value of c[%d] is : %f\n",i,c[i]);
+    }
+    printf("\nThe required second degree parabola is : \n");
+    if(c[1]>0 && c[2]>0)
+    {
+        printf("y=%f+%fx+%fx^2\n",c[0],c[1],c[2]);
+    }
+    else if(c[1]<0 && c[2]<0)
+    {
+        printf("y=%f%fx%fx^2\n",c[0],c[1],c[2]);
+    }
+    else if(c[1]<0)
+    {
+        printf("y=%f%fx+%fx^2\n",c[0],c[1],c[2]);
+    }
+    else
+    {
+        printf("y=%f+%fx%fx^2\n",c[0],c[1],c[2]);
+    }
+    return 0;
+}
+
+<-- Fitting Curve Linear -->
+#include<stdio.h>
+#include<conio.h>
+#include<math.h>
+int main()
+{
+
+    int n,i,x[20],y[20],sumx=0,sumy=0,sumxy=0,sumx2=0;
+    float a,b;
+    printf("\n   C program for Linear Curve Fitting \n ");
+    printf("\n Enter the value of number of terms n:");
+    scanf("%d",&n);
+    printf("\n Enter the values of x:\n");
+    for(i=0;i<=n-1;i++)
+    {
+        scanf(" %d",&x[i]);
+
+    }
+    printf("\n Enter the values of y:");
+    for(i=0;i<=n-1;i++)
+    {
+        scanf("%d",&y[i]);
+    }
+    for(i=0;i<=n-1;i++)
+    {
+        sumx=sumx +x[i];
+        sumx2=sumx2 +x[i]*x[i];
+        sumy=sumy +y[i];
+        sumxy=sumxy +x[i]*y[i];
+
+    }
+    a=((sumx2*sumy -sumx*sumxy)*1.0/(n*sumx2-sumx*sumx)*1.0);
+    b=((n*sumxy-sumx*sumy)*1.0/(n*sumx2-sumx*sumx)*1.0);
+    printf("\n\nThe line is Y=%3.3f +%3.3f X",a,b);
+    return(0);
+}
+
+<-- Fitting Curve Exponential -->
+#include<stdio.h>
+#include<conio.h>
+#include<math.h>
+int main()
+{
+
+    int n,i;
+    float Y[20],sumx=0,sumy=0,sumxy=0,sumx2=0,x[20],y[20];
+    float a,b,A;
+    printf("\n  C program for Exponential Curve fitting\n");
+    printf("\n Enter the value of number of terms n:");
+    scanf("%d",&n);
+    printf("\n Enter the values of x:");
+    for(i=0;i<=n-1;i++)
+    {
+        scanf("%f",&x[i]);
+
+    }
+    printf("\n Enter the values of y:");
+    for(i=0;i<=n-1;i++)
+    {
+        scanf("%f",&y[i]);
+    }
+    for(i=0;i<=n-1;i++)
+    {
+        Y[i]=log(y[i]);
+    }
+    for(i=0;i<=n-1;i++)
+    {
+        sumx=sumx +x[i];
+        sumx2=sumx2 +x[i]*x[i];
+        sumy=sumy +Y[i];
+        sumxy=sumxy +x[i]*Y[i];
+
+    }
+    A=((sumx2*sumy -sumx*sumxy)*1.0/(n*sumx2-sumx*sumx)*1.0);
+    b=((n*sumxy-sumx*sumy)*1.0/(n*sumx2-sumx*sumx)*1.0);
+    a=exp(A);
+    printf("\n\n The curve is Y= %4.3fe^%4.3fX",a,b);
+    return(0);
+}
+
+<-- Gauss Elimination -->
+#include<stdio.h>
+int main()
+{
+    int i,j,k,n;
+    float A[20][20],c,x[10],sum=0.0;
+    printf("\nEnter the order of matrix: ");
+    scanf("%d",&n);
+    printf("\nEnter the elements of augmented matrix row-wise:\n\n");
+    for(i=1; i<=n; i++)
+    {
+        for(j=1; j<=(n+1); j++)
+        {
+            printf("A[%d][%d] : ", i,j);
+            scanf("%f",&A[i][j]);
+        }
+    }
+    for(j=1; j<=n; j++)
+    {
+        for(i=1; i<=n; i++)
+        {
+            if(i>j)
+            {
+                c=A[i][j]/A[j][j];
+                for(k=1; k<=n+1; k++)
+                {
+                    A[i][k]=A[i][k]-c*A[j][k];
+                }
+            }
+        }
+    }
+    x[n]=A[n][n+1]/A[n][n];
+    for(i=n-1; i>=1; i--)
+    {
+        sum=0;
+        for(j=i+1; j<=n; j++)
+        {
+            sum=sum+A[i][j]*x[j];
+        }
+        x[i]=(A[i][n+1]-sum)/A[i][i];
+    }
+    printf("\nThe solution is: \n");
+    for(i=1; i<=n; i++)
+    {
+        printf("\nx%d=%f\t",i,x[i]); /* x1, x2, x3 are the required solutions*/
+    }
+    return(0);
+}
+
+<-- Gauss Jordan -->
+#include<stdio.h>
+int main()
+{
+    int i,j,k,n;
+    float A[20][20],c,x[10];
+    printf("\nEnter the size of matrix: ");
+    scanf("%d",&n);
+    printf("\nEnter the elements of augmented matrix row-wise:\n");
+    for(i=1; i<=n; i++)
+    {
+        for(j=1; j<=(n+1); j++)
+        {
+            printf(" A[%d][%d]:", i,j);
+            scanf("%f",&A[i][j]);
+        }
+    }
+    /* Now finding the elements of diagonal matrix */
+    for(j=1; j<=n; j++)
+    {
+        for(i=1; i<=n; i++)
+        {
+            if(i!=j)
+            {
+                c=A[i][j]/A[j][j];
+                for(k=1; k<=n+1; k++)
+                {
+                    A[i][k]=A[i][k]-c*A[j][k];
+                }
+            }
+        }
+    }
+    printf("\nThe solution is:\n");
+    for(i=1; i<=n; i++)
+    {
+        x[i]=A[i][n+1]/A[i][i];
+        printf("\n x%d=%f\n",i,x[i]);
+    }
+    return(0);
+}
